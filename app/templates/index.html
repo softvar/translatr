@@ -241,7 +241,7 @@
 				</form>
 
 				<!-- Output -->
-				<div ng-show="settings.isJsonFormattedOutput && jsonFormattedOutput.length" style="background: #EEE; padding: 10px;">
+				<div ng-show="settings.isJsonFormattedOutput && jsonFormattedOutput.length">
 					<h5 class="blue-text  text-lighten-1" style="border-bottom: 1px solid #ccc;">JSON Formatted Output:</h5>
 					<textarea
 						ng-model="jsonFormattedOutput"
@@ -264,9 +264,11 @@
 				<h5 ng-show="translatedText" class="blue-text  text-lighten-1" style="margin-top:15px;border-bottom: 1px solid #ccc;">
 					Translated strings for the selected countries:
 				</h5>
-				<div id="output" ng-repeat="(locale, translatedString) in translatedText" class="margin-top">
-					<strong>{{ locales[locale] }}: </strong>
-					<span ng-click="highlightTranslatedString(locale)" id="selectedText-{{ locale }}">{{ translatedString }}</span>
+				<div ng-show="translatedText && Object.keys(translatedText).length" style="background: #EEE; padding: 10px;">
+					<div id="output" ng-repeat="(locale, translatedString) in translatedText" class="margin-top">
+						<strong>{{ locales[locale] }}: </strong>
+						<span ng-click="highlightTranslatedString(locale)" id="selectedText-{{ locale }}">{{ translatedString }}</span>
+					</div>
 				</div>
 
 				{% endraw %}
