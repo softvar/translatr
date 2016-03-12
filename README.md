@@ -16,8 +16,10 @@ Google Translate API is not free and this tool fetches result from it's older AP
 
 **Note:** Please don't consider it to be a full fledged API. This project is meant only for small and tedious translation purposes.
 
-### STack
+### Stack
 
-This app is developed using Open-Source technologies. A micro 'web'-framework for  python - <a href="http://flask.pocoo.org/">FLASK</a> is used for serving requests.
+This app is developed using Open-Source technologies
 
-For the front-end part, AngularJs is used along with <a href="http://materializecss.com/">Materialize framework</a>, a modern responsive framework based on Material Design.
+A micro web-framework for  python - [FLASK](http://flask.pocoo.org/) is used for serving requests.
+
+For the front-end part, [AngularJs](https://angularjs.org/) is used along with [Materialize framework](http://materializecss.com/), a modern responsive framework based on Material Design.
