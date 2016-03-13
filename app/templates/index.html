@@ -312,8 +312,61 @@
 	<script type="text/javascript" src="../static/js/vendor/angular-1.4.min.js"></script>
 
 	<script type="text/javascript" src="../static/js/vendor/clipboard.min.js"></script>
+	<script type="text/javascript" src="../static/js/vendor/superplaceholder.min.js"></script>
+	<script type="text/javascript">
+		superplaceholder({
+			el: document.getElementById('text'),
+			sentences: [
+				'Translatr is a simple service for your daily needs',
+				'Enter your text here',
+				'Select multiple languages at once',
+				'Option to have JSON formatted output to be used in projects',
+				'Wow! Simple to use, ready to serve',
+				'Example 1: Will you marry me? lol',
+				'Example 2: Damn! What the hell I just saw right now! Seriously?'
+			],
+			options: {
+				letterDelay: 50,
+				sentenceDelay: 400,
+				startOnFocus: true,
+				loop: true
+			}
+		});
+	</script>
 
 	<script type="text/javascript" src="../static/js/app.js"></script>
 	<script id="dsq-count-scr" src="//translatr.disqus.com/count.js" async></script>
+	<script>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+			ga('create', 'UA-43718849-2', 'auto');
+			ga('send', 'pageview');
+
+		</script>
+		<!-- Start Visual Website Optimizer Synchronous Code -->
+
+		<script type='text/javascript'>
+			var _vis_opt_account_id = 60781;
+			var _vis_opt_protocol = (('https:' == document.location.protocol) ? 'https://' : 'http://');
+			document.write('<s' + 'cript src="' + _vis_opt_protocol +
+			'dev.visualwebsiteoptimizer.com/deploy/js_visitor_settings.php?v=1&a='+_vis_opt_account_id+'&url='
+			+encodeURIComponent(document.URL)+'&random='+Math.random()+'" type="text/javascript">' + '<\/s' + 'cript>');
+		</script>
+
+		<script type='text/javascript'>
+			if(typeof(_vis_opt_settings_loaded) == "boolean") { document.write('<s' + 'cript src="' + _vis_opt_protocol +
+			'd5phz18u4wuww.cloudfront.net/vis_opt.js" type="text/javascript">' + '<\/s' + 'cript>'); }
+			// if your site already has jQuery 1.4.2, replace vis_opt.js with vis_opt_no_jquery.js above
+		</script>
+
+		<script type='text/javascript'>
+			if(typeof(_vis_opt_settings_loaded) == "boolean" && typeof(_vis_opt_top_initialize) == "function") {
+			        _vis_opt_top_initialize(); vwo_$(document).ready(function() { _vis_opt_bottom_initialize(); });
+			}
+		</script>
+		<!-- End Visual Website Optimizer Synchronous Code -->
 </body>
 </html>
