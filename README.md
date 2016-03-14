@@ -14,6 +14,7 @@ Google Translate API is not free and this tool fetches result from it's older AP
 1. It helps in translating multiple languages at once. The service translates a string one by one and then outputs the desired output once all being done.
 2. It can be used as an API for small personal needs.
 3. It stores current options in LocalStorage thereby speeding usage for later.
+4. Directly copy the JSON formatted response to your clipboard.
 
 **Note:** Please don't consider it to be a full fledged API. This project is meant only for small and tedious translation purposes.
 
