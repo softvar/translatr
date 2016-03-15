@@ -99,6 +99,8 @@ app.controller('translatrController', function ($scope, $http, $timeout) {
 		'zu': 'Zulu'
 		};
 
+		$scope.filteredLocales = {};
+		angular.copy($scope.locales, $scope.filteredLocales);
 		$scope.settings = {};
 		$scope.settings.selectedLocales = {};
 		$scope.jsonFormattedOutput = [];
@@ -243,6 +245,33 @@ app.controller('translatrController', function ($scope, $http, $timeout) {
 	    		$scope.isTextCopied = false;
 	    	}, 2000);
 	    };
+
+	    $scope.selectAll = function (e) {
+	    	e.preventDefault();
+	    	e.stopPropagation();
+
+	    	angular.forEach($scope.locales, function (v, k) {
+	    		if ($scope.isSelectAllClicked) {
+	    			$scope.settings.selectedLocales[k] = false;
+	    		} else {
+	    			$scope.settings.selectedLocales[k] = true;
+	    		}
+	    	});
+	    	$scope.isSelectAllClicked = !$scope.isSelectAllClicked;
+	    };
+
+	    $scope.$watch('search', function (newSearchTerm, oldSearchTerm) {
+	    	//if (!angular.isDefined(newSearchTerm)) { return; }
+
+	    	angular.copy($scope.locales, $scope.filteredLocales);
+			angular.forEach($scope.locales, function (v, k) {
+				v = v.toLowerCase();
+				newSearchTerm = newSearchTerm && newSearchTerm.toLowerCase();
+				if (newSearchTerm && v.indexOf(newSearchTerm) === -1) {
+					delete $scope.filteredLocales[k];
+				}
+			});
+	    });
 });
 
 app.$inject = [ '$scope', '$http', '$timeout' ];

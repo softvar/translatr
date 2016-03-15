@@ -36,6 +36,11 @@
 			box-shadow: 0 1px 0 0 #2196f3;
 		}
 
+		input[type=search]:focus:not([readonly]) {
+		    border-bottom: 1px solid #2196f3;
+    		box-shadow: 0 1px 0 0 #2196f3;
+		}
+
 		.text--selected {
 			color: #2196f3;
 		}
@@ -243,7 +248,7 @@
                 </div>
 			</div>
 			<div class="col s12 m8 l9">
-				<form ng-submit="validateAndTranslate()">
+				<form ng-cloak ng-submit="validateAndTranslate()">
 					<!-- To turn off jinja2 templating here -->
 					{% raw %}
 					<h4 class="center" style="color:#777;">Translate to multiple languages at once</h4>
@@ -264,10 +269,19 @@
 					<div style="border: 1px solid #ddd;">
 						<div class="collapsible-header" ng-click="settings.isLangUagePanelExpandable = !settings.isLangUagePanelExpandable;">
 							<strong class="blue-text" style="margin-bottom:5px;font-size:24px;">Select Languages</strong>
+							<a style="float: right;" ng-click="selectAll($event, isSelectAllClicked)">
+								{{ isSelectAllClicked ? 'Unselect all' : 'Select all' }}
+							</a>
 							<span ng-class="{'arrow-up': settings.isLangUagePanelExpandable,'arrow-down': !settings.isLangUagePanelExpandable}"></span>
 						</div>
+
 						<div class="row  margin--top  padding-sides--15" ng-class="{'hidden': !settings.isLangUagePanelExpandable}">
-							<div ng-repeat="(localeName, localeValue) in locales" class="col  country-column" style="margin-top:5px;width: 20%;">
+							<div class="col s12" style="margin-left:10px;">
+								<input id="search" type="search" ng-model="search" placeholder="Search countries..." style="text-align: center;" title="Filter the countries">
+		        				<label for="search"></label>
+		        			</div>
+
+							<div ng-repeat="(localeName, localeValue) in filteredLocales" class="col  country-column" style="margin-top:5px;width: 20%;">
 								<input type="checkbox" id="{{ localeName }}" ng-model="settings.selectedLocales[localeName]"/>
 								<label for="{{ localeName }}" class="country-name" ng-class="{'text--selected': settings.selectedLocales[localeName]}">{{ localeValue }}</label>
 							</div>
@@ -302,7 +316,7 @@
 				</form>
 
 				<!-- Output -->
-				<div ng-show="settings.isJsonFormattedOutput && jsonFormattedOutput.length">
+				<div ng-cloak ng-show="settings.isJsonFormattedOutput && jsonFormattedOutput.length">
 					<h5 class="blue-text  text-lighten-1" style="border-bottom: 1px solid #ccc;">JSON Formatted Output:</h5>
 					<textarea
 						ng-model="jsonFormattedOutput"
@@ -322,10 +336,10 @@
 					</div>
 				</div>
 
-				<h5 ng-show="translatedText" class="blue-text  text-lighten-1" style="margin-top:15px;border-bottom: 1px solid #ccc;">
+				<h5 ng-cloak ng-show="translatedText" class="blue-text  text-lighten-1" style="margin-top:15px;border-bottom: 1px solid #ccc;">
 					Translated strings for the selected countries:
 				</h5>
-				<div ng-show="translatedText && Object.keys(translatedText).length" style="background: #EEE; padding: 10px;">
+				<div ng-cloak ng-show="translatedText && Object.keys(translatedText).length" style="background: #EEE; padding: 10px;">
 					<div id="output" ng-repeat="(locale, translatedString) in translatedText" class="margin-top">
 						<strong>{{ locales[locale] }}: </strong>
 						<span ng-click="highlightTranslatedString(locale)" id="selectedText-{{ locale }}">{{ translatedString }}</span>
@@ -406,7 +420,7 @@
 			options: {
 				letterDelay: 50,
 				sentenceDelay: 400,
-				startOnFocus: true,
+				startOnFocus: false,
 				loop: true
 			}
 		});
