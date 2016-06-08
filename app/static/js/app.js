@@ -99,8 +99,18 @@ app.controller('translatrController', function ($scope, $http, $timeout) {
 		'zu': 'Zulu'
 		};
 
+		function localeSort() {
+			$scope.sortedLocales = Object.keys($scope.filteredLocales)
+			.map(function(el) {
+				return { localeName: el, localeValue: $scope.filteredLocales[el] };
+			})
+			.sort(function(a, b) {
+				return a.localeValue.localeCompare(b.localeValue);
+			});
+		}
 		$scope.filteredLocales = {};
 		angular.copy($scope.locales, $scope.filteredLocales);
+		localeSort();
 		$scope.settings = {};
 		$scope.settings.selectedLocales = {};
 		$scope.jsonFormattedOutput = [];
@@ -271,6 +281,7 @@ app.controller('translatrController', function ($scope, $http, $timeout) {
 					delete $scope.filteredLocales[k];
 				}
 			});
+			localeSort();
 	    });
 });
 
