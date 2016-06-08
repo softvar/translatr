@@ -97,110 +97,111 @@ app.controller('translatrController', function ($scope, $http, $timeout) {
 		'zh-CN': 'Chinese (Simplified)',
 		'zh-TW': 'Chinese (Traditional)',
 		'zu': 'Zulu'
-		};
+	};
 
-		function localeSort() {
-			$scope.sortedLocales = Object.keys($scope.filteredLocales)
-			.map(function(el) {
-				return { localeName: el, localeValue: $scope.filteredLocales[el] };
-			})
-			.sort(function(a, b) {
-				return a.localeValue.localeCompare(b.localeValue);
-			});
+	function localeSort() {
+		$scope.sortedLocales = Object.keys($scope.filteredLocales)
+		.map(function(el) {
+			return { localeName: el, localeValue: $scope.filteredLocales[el] };
+		})
+		.sort(function(a, b) {
+			return a.localeValue.localeCompare(b.localeValue);
+		});
+	}
+	$scope.filteredLocales = {};
+	angular.copy($scope.locales, $scope.filteredLocales);
+	localeSort();
+	$scope.settings = {};
+	$scope.settings.selectedLocales = {};
+	$scope.jsonFormattedOutput = [];
+	$scope.settings.isLangUagePanelExpandable = true;
+
+	$scope.utils = {
+		/**
+		 * Get local storage data decode it before using it
+		 * @return {String}
+		 */
+		getLocalStorageData: function () {
+			var data;
+			if (localStorage.getItem('translatr_app_data')) {
+				data = atob(localStorage.getItem('translatr_app_data'));
+				return JSON.parse(data);
+			}
+			return false;
+		},
+		/**
+		 * Save data to local storage
+		 * @param {String/Number}  data
+		 */
+		setLocalStorageData: function (data) {
+			localStorage.setItem('translatr_app_data', btoa(JSON.stringify(data)));
 		}
-		$scope.filteredLocales = {};
-		angular.copy($scope.locales, $scope.filteredLocales);
-		localeSort();
-		$scope.settings = {};
+	};
+
+	$('#text').focus();
+
+	$scope.storedData = $scope.utils.getLocalStorageData();
+	$scope.loadStoredData = function () {
+		// Reset all checkboxes
 		$scope.settings.selectedLocales = {};
-		$scope.jsonFormattedOutput = [];
-		$scope.settings.isLangUagePanelExpandable = true;
-
-		$scope.utils = {
-			/**
-			 * Get local storage data decode it before using it
-			 * @return {String}
-			 */
-			getLocalStorageData: function () {
-				var data;
-				if (localStorage.getItem('translatr_app_data')) {
-					data = atob(localStorage.getItem('translatr_app_data'));
-					return JSON.parse(data);
-				}
-				return false;
-			},
-			/**
-			 * Save data to local storage
-			 * @param {String/Number}  data
-			 */
-			setLocalStorageData: function (data) {
-				localStorage.setItem('translatr_app_data', btoa(JSON.stringify(data)));
-			}
-		};
-
-		$('#text').focus();
-
 		$scope.storedData = $scope.utils.getLocalStorageData();
-		$scope.loadStoredData = function () {
-			// Reset all checkboxes
-			$scope.settings.selectedLocales = {};
-			$scope.storedData = $scope.utils.getLocalStorageData();
-			var i;
-			$scope.userText = $scope.storedData.t;
-			for (i = 0; i < $scope.storedData.l.length; i++) {
-				$scope.settings.selectedLocales[$scope.storedData.l[i]] = true;
-			};
-
-			$scope.isStoredDataLoaded = true;
+		var i;
+		$scope.userText = $scope.storedData.t;
+		for (i = 0; i < $scope.storedData.l.length; i++) {
+			$scope.settings.selectedLocales[$scope.storedData.l[i]] = true;
 		};
 
-		$scope.getSelectedLocales = function () {
-			var selectedlocales = [];
-			angular.forEach($scope.settings.selectedLocales, function (v, k) {
-				if (v) { selectedlocales.push(k); }
-			});
-			return selectedlocales;
-		};
+		$scope.isStoredDataLoaded = true;
+	};
 
-		$scope.resetInput = function () {
-			$scope.userText = '';
-			$scope.settings.selectedLocales = {};
-			$scope.isStoredDataLoaded = !$scope.isStoredDataLoaded;
-		};
+	$scope.getSelectedLocales = function () {
+		var selectedlocales = [];
+		angular.forEach($scope.settings.selectedLocales, function (v, k) {
+			if (v) { selectedlocales.push(k); }
+		});
+		return selectedlocales;
+	};
 
-		$scope.validateAndTranslate = function () {
-			// List of selected locles, send them to backend, `l` to optimize request
-			var l = [];
-			var params = {};
+	$scope.resetInput = function () {
+		$scope.userText = '';
+		$scope.settings.selectedLocales = {};
+		$scope.isStoredDataLoaded = !$scope.isStoredDataLoaded;
+	};
 
-			angular.forEach($scope.settings.selectedLocales, function (value, key) {
-				if (value) {
-					l.push({locale: key});
-				}
-			});
-			$scope.isPositive = false;
+	$scope.validateAndTranslate = function () {
+		// List of selected locles, send them to backend, `l` to optimize request
+		var l = [];
+		var params = {};
 
-			if (!$scope.userText) {
-				$scope.errorText = 'Please enter valid text.';
-				return;
+		angular.forEach($scope.settings.selectedLocales, function (value, key) {
+			if (value) {
+				l.push({locale: key});
 			}
+		});
+		$scope.isPositive = false;
 
-			if (!l.length) {
-				$scope.errorText = 'Please select at leat one language.';
-				return;
-			}
+		if (!$scope.userText) {
+			$scope.errorText = 'Please enter valid text.';
+			return;
+		}
 
-			$scope.errorText = '';
-			$scope.translatedText = {};
-			$scope.jsonFormattedOutput = [];
-			$scope.isFetchingData = true;
+		if (!l.length) {
+			$scope.errorText = 'Please select at leat one language.';
+			return;
+		}
 
-			params.userText = $scope.userText;
-			params.l = l;
+		$scope.errorText = '';
+		$scope.translatedText = {};
+		$scope.jsonFormattedOutput = [];
+		$scope.isFetchingData = true;
 
-			$scope.isPositive = true;
-			$scope.errorText = 'Please wait, crunching latest data.';
-			$http.post('', params).then(function (config) {
+		params.userText = $scope.userText;
+		params.l = l;
+
+		$scope.isPositive = true;
+		$scope.errorText = 'Please wait, crunching latest data.';
+		$http.post('', params)
+			.then(function (config) {
 				$scope.errorText = '';
 				$scope.isFetchingData = false;
 				$scope.isStoredDataLoaded = true;
@@ -215,74 +216,71 @@ app.controller('translatrController', function ($scope, $http, $timeout) {
 				}, 0);
 
 			}, //error
-				function () {
-					$scope.isFetchingData = false;
-					$scope.isPositive = false;
-					$scope.errorText = 'Something went wrong. Please try again.';
-				})
-			;
-		};
-
-		$scope.generateJsonFormattedOutput = function (data) {
-			var jsonFormattedOutput = [];
-			var obj = {};
-			angular.forEach(data, function (v, k) {
-				obj = {};
-				obj.locale = k;
-				obj.country = $scope.locales[k];
-				obj.string = v;
-				jsonFormattedOutput.push(obj);
+			function () {
+				$scope.isFetchingData = false;
+				$scope.isPositive = false;
+				$scope.errorText = 'Something went wrong. Please try again.';
 			});
-			$scope.jsonFormattedOutput = JSON.stringify(jsonFormattedOutput);
-		};
+	};
 
-		$scope.highlightTranslatedString = function (locale) {
-	        var range;
-	        if (document.selection) {
-	            range = document.body.createTextRange();
-	            range.moveToElementText(document.getElementById('selectedText-' + locale));
-	            range.select();
-	        } else if (window.getSelection) {
-	            range = document.createRange();
-	            range.selectNode(document.getElementById('selectedText-' + locale));
-	            window.getSelection().addRange(range);
-	        }
-	    };
+	$scope.generateJsonFormattedOutput = function (data) {
+		var jsonFormattedOutput = [];
+		var obj = {};
+		angular.forEach(data, function (v, k) {
+			obj = {};
+			obj.locale = k;
+			obj.country = $scope.locales[k];
+			obj.string = v;
+			jsonFormattedOutput.push(obj);
+		});
+		$scope.jsonFormattedOutput = JSON.stringify(jsonFormattedOutput);
+	};
 
-	    $scope.copyText = function () {
-	    	$scope.isTextCopied = true;
-	    	$timeout(function () {
-	    		$scope.isTextCopied = false;
-	    	}, 2000);
-	    };
+	$scope.highlightTranslatedString = function (locale) {
+		var range;
+		if (document.selection) {
+			range = document.body.createTextRange();
+			range.moveToElementText(document.getElementById('selectedText-' + locale));
+			range.select();
+		} else if (window.getSelection) {
+			range = document.createRange();
+			range.selectNode(document.getElementById('selectedText-' + locale));
+			window.getSelection().addRange(range);
+		}
+	};
 
-	    $scope.selectAll = function (e) {
-	    	e.preventDefault();
-	    	e.stopPropagation();
+	$scope.copyText = function () {
+		$scope.isTextCopied = true;
+		$timeout(function () {
+			$scope.isTextCopied = false;
+		}, 2000);
+	};
 
-	    	angular.forEach($scope.locales, function (v, k) {
-	    		if ($scope.isSelectAllClicked) {
-	    			$scope.settings.selectedLocales[k] = false;
-	    		} else {
-	    			$scope.settings.selectedLocales[k] = true;
-	    		}
-	    	});
-	    	$scope.isSelectAllClicked = !$scope.isSelectAllClicked;
-	    };
+	$scope.selectAll = function (e) {
+		e.preventDefault();
+		e.stopPropagation();
 
-	    $scope.$watch('search', function (newSearchTerm, oldSearchTerm) {
-	    	//if (!angular.isDefined(newSearchTerm)) { return; }
+		angular.forEach($scope.locales, function (v, k) {
+			if ($scope.isSelectAllClicked) {
+				$scope.settings.selectedLocales[k] = false;
+			} else {
+				$scope.settings.selectedLocales[k] = true;
+			}
+		});
+		$scope.isSelectAllClicked = !$scope.isSelectAllClicked;
+	};
 
-	    	angular.copy($scope.locales, $scope.filteredLocales);
-			angular.forEach($scope.locales, function (v, k) {
-				v = v.toLowerCase();
-				newSearchTerm = newSearchTerm && newSearchTerm.toLowerCase();
-				if (newSearchTerm && v.indexOf(newSearchTerm) === -1) {
-					delete $scope.filteredLocales[k];
-				}
-			});
-			localeSort();
-	    });
+	$scope.$watch('search', function (newSearchTerm, oldSearchTerm) {
+		angular.copy($scope.locales, $scope.filteredLocales);
+		angular.forEach($scope.locales, function (v, k) {
+			v = v.toLowerCase();
+			newSearchTerm = newSearchTerm && newSearchTerm.toLowerCase();
+			if (newSearchTerm && v.indexOf(newSearchTerm) === -1) {
+				delete $scope.filteredLocales[k];
+			}
+		});
+		localeSort();
+	});
 });
 
 app.$inject = [ '$scope', '$http', '$timeout' ];
