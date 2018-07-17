@@ -283,7 +283,7 @@
 
 							<div ng-repeat="(localeName, localeValue) in filteredLocales" class="col  country-column" style="margin-top:5px;width: 20%;">
 								<input type="checkbox" id="{{ localeName }}" ng-model="settings.selectedLocales[localeName]"/>
-								<label for="{{ localeName }}" class="country-name" ng-class="{'text--selected': settings.selectedLocales[localeName]}">{{ localeValue }}</label>
+								<label for="{{ localeName }}" class="country-name" ng-class="{'text--selected': settings.selectedLocales[localeName]}">{{ localeValue }} ( {{ localeName }} )</label>
 							</div>
 						</div>
 					</div>
